@@ -14,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"sync"
 	"strconv"
 	"strings"
 )
@@ -23,16 +22,13 @@ func main() {
 	file, _ := os.Create("myfile.txt")
 	defer file.Close()
 
-	var mutex = &sync.Mutex{}
 	start := time.Now()
 	ch := make(chan string)
 	for _, url := range os.Args[1:] {
 		go fetch(url, ch) // start a goroutine
 	}
 	for range os.Args[1:] {
-		mutex.Lock()
 		file.WriteString(<-ch + "\n") // receive from channel ch and write to file.
-		mutex.Unlock()
 	}
 	file.WriteString(strconv.FormatFloat(time.Since(start).Seconds(), 'f', 6, 64) + "s elapsed\n")
 }
