@@ -16,15 +16,13 @@ attribute. The function should stop the travesal as soon as a match is found.
 
 var shouldEvaluate bool
 func main() {
-	fmt.Println("ENTER")
 	n := ElementByID(getHtml("http://www.finn.no"), "meta")
 	fmt.Println(n.Data)
 }
 
-func forEachNode(n *html.Node, id string, pre, post func(n *html.Node, id string) bool){
-	shouldEvaluate = true
-	if pre != nil {
-		shouldEvaluate = !pre(n,id)
+func forEachNode(n *html.Node, id string, pre, post func(n *html.Node, id string) bool) *html.Node{
+	if pre != nil && shouldEvaluate{
+		shouldEvaluate = pre(n,id)
 	}
 	fmt.Println(shouldEvaluate)
 
@@ -32,17 +30,18 @@ func forEachNode(n *html.Node, id string, pre, post func(n *html.Node, id string
 		forEachNode(c, id, pre, post)
 	}
 
-	if post != nil {
-		post(n, id)
+	if post != nil && shouldEvaluate{
+		shouldEvaluate = post(n, id)
 	}
+	return nil
 }
 
 func ElementByID(doc *html.Node, id string) *html.Node {
-	forEachNode(doc,id,  findElement, nil)
-	return doc
+	shouldEvaluate = true
+	return forEachNode(doc,id,  keepTraversing, keepTraversing)
 }
-func findElement(n *html.Node, id string) bool {
-	return n.Data == id && n.Type == html.ElementNode
+func keepTraversing(n *html.Node, id string) bool {
+	return !(n.Data == id && n.Type == html.ElementNode)
 }
 
 

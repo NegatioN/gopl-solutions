@@ -12,7 +12,7 @@ import (
 func main() {
 	wordCounts := make(map[string]int)
 
-	absPath, _ := filepath.Abs("inputData/textfile.txt")
+	absPath, _ := filepath.Abs("../inputData/textfile.txt")
 	file, err := os.Open(absPath)
 	defer file.Close()
 	if err != nil {

@@ -35,9 +35,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		makeUserPng(100, 100, 2, w)
 	}
 
-	mu.Lock()
 	makeUserPng(width,height,zoom, w)
-	mu.Unlock()
 }
 
 
